@@ -1,0 +1,4 @@
+preset: psr12
+risky: false
+tab-width: 4
+use-tabs: false
