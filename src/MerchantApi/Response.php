@@ -13,7 +13,7 @@ abstract class Response {
 
     public function isSuccess(): bool
     {
-        return $this->error === null;
+        return get_class($this) === Success::class;
     }
 
     public function getContent(): string

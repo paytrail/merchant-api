@@ -18,6 +18,17 @@ $merchant = Merchant::create($merchantId, $merchantSecret);
 $merchantApi = new MerchantApi($merchant);
 ```
 
+All API calls will return Either `Success` or `Failed` object. Both of them extend `Response` object.
+Response object have methods; `getContent()` and `getErrror()`.
+If API call is success, `getContent()` will return response content from response itself.
+On failed calls `getContent()` returns null and `getError()` return error message.
+Both methods will return string.
+
+You can check response status.
+```php
+$response->isSuccess();
+```
+
 ## Creating refund
 
 ```php
@@ -25,7 +36,7 @@ $paymentId = 100000000000
 $customerEmail = 'customer@nomail.com';
 $notifyUrl = 'https://url/to/shop/notification';
 
-$products = [
+$rows = [
     [
         'amount' => 1000,
         'description' => 'Some Product',
@@ -38,44 +49,85 @@ $products = [
     ],
 ];
 
-$merchantApi->createRefund($paymentId, $products, $notifyUrl, $customerEmail);
+$refundToken = $merchantApi->createRefund($paymentId, $rows, $customerEmail, $notifyUrl)->getContent();
 ```
-Response is sent to `$notifyUrl`, so you need to catch it there.
 
-Both `$notifyUrl` and `$customerEmail` are optional parameters, or can be sent as `null`.
+Paytrail API will send response to `$notifyUrl`. This is optional, but highly recommended parameter.
+
+Request returns refund token, which can be used to get refund details or cancel refund.
+
+More info about creating refunds in [documentation](https://docs.paytrail.com/refunds/create/).
 
 ## Cancelling refund
 
 ```php
-$merchantApi->cancelRefund($refundToken);
+$cancelledRefundToken = $merchantApi->cancelRefund($refundToken)->getContent();
 ```
+
+Cancel refund by refund token. Response will return cancelled refund token.
+
+More info about cancelling refund in [documentation](https://docs.paytrail.com/refunds/cancel/).
 
 ## Getting refund details
 
 ```php
-$merchantApi->getRefundDetails($refundId);
+$refundDetails = $merchantApi->getRefundDetails($refundId)->getContent();
+$detailsObject = json_decode($refundDetails);
 ```
+
+`$refundDetails` is JSON encoded object.
+
+More info about refund details in [documentation](https://docs.paytrail.com/refunds/details/).
 
 ## Getting settlements
 
 Get settlements between two dates.
 
 ```php
-$merchantApi->getSettlements($fromDate, $toDate));
+$settlements = $merchantApi->getSettlements($fromDate, $toDate)->getContent();
+$settlementsArray = json_decode($settlements);
 ```
 
 If `$toDate` is not set, it defaults to current date.
+Dates must be in `Y-m-d` format.
 
-Dates should be in `Y-m-d` format.
+Response is array containing settlement objects
+
+More info about settlements in [documentation](https://docs.paytrail.com/settlements/list/).
 
 ## Getting settlement details
 
 ```php
-$merchantApi->getSettlementDetails($settlementId);
+$settlementDetails = $merchantApi->getSettlementDetails($settlementId)->getContent();
+$settlementDetailsObject = json_decode($settlementDetails);
 ```
 
+`$settlementId` is `id` value from settlement object in settlement details array.
+
+More info about settlement details in [documentation](https://docs.paytrail.com/settlements/querying-settlement-details/).
+
+## Getting payments
+
+```php
+$payments = $merchantApi->getPayments($orderNumber)->getContent();
+$paymentsArray = json_decode($payments);
+```
+
+Payment array contains payment objects.
+
+ This will return all payments with order number. Old payment interfaces won't return Payment id.
+ You can use this method to get all payments by order number.
+ Payment object id is `$paymentId` value used to create refunds and query payment details.
+ 
+ More info about getting payments by order number in [documentation](https://docs.paytrail.com/settlements/payments-by-order-number/).
+ 
 ## Getting payment details
 
 ```php
-$merchantApi->getPaymentDetails($paymentId);
+$paymentDetails = $merchantApi->getPaymentDetails($paymentId)->getContent();
+$paymentDetailsObject = json_decode($paymentDetails);
 ```
+
+`$paymentId` is payment id used to create refund.
+
+More info about payment details in [documentation](https://docs.paytrail.com/settlements/payment-details/).
