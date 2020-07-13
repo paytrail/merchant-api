@@ -3,7 +3,7 @@ Library for using Paytrail Merchant API services
 
 ## Installation
 
-```
+```bash
 composer require paytrail/merchant-api
 ```
 
@@ -55,6 +55,10 @@ $refundToken = $merchantApi->createRefund($paymentId, $rows, $customerEmail, $no
 Paytrail API will send response to `$notifyUrl`. This is optional, but highly recommended parameter.
 
 Request returns refund token, which can be used to get refund details or cancel refund.
+
+**Note:** Refunds are created with payment id. If you only have order number, but not payment id.
+You can use `getPayments()` method to get payment id for order number.
+If you use [E2 interface](https://docs.paytrail.com/payments/e2-interface/), you get Payment Id from return parameters after customer has completed payment.
 
 More info about creating refunds in [documentation](https://docs.paytrail.com/refunds/create/).
 
