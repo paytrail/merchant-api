@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace tests;
@@ -13,8 +14,8 @@ use Paytrail\MerchantApi\Merchant;
 use Paytrail\MerchantApi\MerchantApi;
 use PHPUnit\Framework\TestCase;
 
-class MerchantApiTest extends TestCase {
-
+class MerchantApiTest extends TestCase
+{
     public function getMerchantApi(MockHandler $mock)
     {
         $handlerStack = HandlerStack::create($mock);
@@ -67,7 +68,7 @@ class MerchantApiTest extends TestCase {
         $refundToken = hash('md5', microtime());
 
         $responseHeaders = [
-            'Location' => 'https://api.paytrail.com/payment/asdasdasd/'.$refundToken,
+            'Location' => 'https://api.paytrail.com/payment/asdasdasd/' . $refundToken,
         ];
 
         $mock = new MockHandler([

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Paytrail\MerchantApi;
@@ -6,8 +7,8 @@ namespace Paytrail\MerchantApi;
 /**
  * @author Paytrail <tech@paytrail.com>
  */
-abstract class Response {
-
+abstract class Response
+{
     protected $content;
     protected $error;
 
