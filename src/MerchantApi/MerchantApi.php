@@ -22,10 +22,10 @@ class MerchantApi
     private $merchant;
     private $apiUrl;
 
-    public function __construct(Merchant $merchant)
+    public function __construct(Merchant $merchant, Client $client = null)
     {
         $this->merchant = $merchant;
-        $this->client = new Client();
+        $this->client = $client ?? new Client();
         $this->apiUrl = self::DEFAULT_API_URL;
     }
 
@@ -241,6 +241,7 @@ class MerchantApi
         }
 
         $statusCode = $response->getStatusCode();
+
         if ($statusCode === $acceptedStatusCode) {
             return new Success($response->getBody()->getContents());
         }
