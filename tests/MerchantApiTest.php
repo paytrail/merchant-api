@@ -21,7 +21,6 @@ class MerchantApiTest extends TestCase
         $handlerStack = HandlerStack::create($mock);
         $client = new Client(['handler' => $handlerStack]);
 
-        parent::setUp();
         $merchant = Merchant::create('13466', '6pKF4jkv97zmqBJ3ZL8gUw5DfT2NMQ');
         return new MerchantApi($merchant, $client);
     }

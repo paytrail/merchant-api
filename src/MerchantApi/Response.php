@@ -9,7 +9,14 @@ namespace Paytrail\MerchantApi;
  */
 abstract class Response
 {
+    /**
+     * @var string
+     */
     protected $content;
+
+    /**
+     * @var string
+     */
     protected $error;
 
     public function isSuccess(): bool

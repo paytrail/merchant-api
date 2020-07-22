@@ -12,7 +12,8 @@
     "minimum-stability": "stable",
     "require": {
         "php": ">=7.2",
-        "guzzlehttp/guzzle": "^6.5"
+        "guzzlehttp/guzzle": "^6.5",
+        "ext-json": "*"
     },
     "autoload": {
         "psr-4": {

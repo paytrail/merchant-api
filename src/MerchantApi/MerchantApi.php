@@ -19,6 +19,10 @@ class MerchantApi
     const METHOD_GET = 'GET';
     const METHOD_DELETE = 'DELETE';
 
+    const PAYMENT_ENDPOINT = '/merchant/v1/payments';
+    const REFUND_ENDPOINT = '/merchant/v1/refunds';
+    const SETTLEMENT_ENDPOINT = '/merchant/v1/settlements';
+
     private $client;
     private $merchant;
     private $apiUrl;
@@ -46,23 +50,20 @@ class MerchantApi
             'email' => $email,
         ];
 
-        if ($notifyUrl !== null) {
-            $content['notifyUrl'] = $notifyUrl;
-        }
+        $content['notifyUrl'] = $notifyUrl ?? null;
 
         $headers = [
             'Refund-Origin' => 'internal',
         ];
 
-        $endpoint = '/merchant/v1/payments/' . $paymentId . '/refunds';
+        $endpoint = self::PAYMENT_ENDPOINT . "/{$paymentId}/refunds";
         $response = $this->sendRequest($endpoint, self::METHOD_POST, json_encode($content), $headers);
 
         if (!is_object($response)) {
             return new Failed($response);
         }
 
-        $statusCode = $response->getStatusCode();
-        if ($statusCode === 202) {
+        if ($response->getStatusCode() === 202) {
             $location = $response->getHeaders()['Location'][0];
             $locationParts = explode('/', $location);
 
@@ -81,7 +82,7 @@ class MerchantApi
      */
     public function cancelRefund(string $refundToken): Response
     {
-        $endpoint = '/merchant/v1/refunds/' . $refundToken;
+        $endpoint = self::REFUND_ENDPOINT . "/{$refundToken}";
         $response =  $this->sendRequest($endpoint, self::METHOD_DELETE);
 
         return $this->handleResponse($response, 204);
@@ -95,7 +96,7 @@ class MerchantApi
      */
     public function getRefundDetails(string $refundToken): Response
     {
-        $endpoint = '/merchant/v1/refunds/' . $refundToken;
+        $endpoint = self::REFUND_ENDPOINT . "/{$refundToken}";
         $response = $this->sendRequest($endpoint, self::METHOD_GET);
 
         return $this->handleResponse($response);
@@ -111,7 +112,7 @@ class MerchantApi
     public function getSettlements(string $fromDate, ?string $toDate = null): Response
     {
         $toDate = $toDate ?? date('Y-m-d');
-        $endpoint = '/merchant/v1/settlements?fromDate=' . $fromDate . '&toDate=' . $toDate;
+        $endpoint = self::SETTLEMENT_ENDPOINT . "?fromDate={$fromDate}&toDate={$toDate}";
         $response = $this->sendRequest($endpoint, self::METHOD_GET);
 
         return $this->handleResponse($response);
@@ -125,7 +126,7 @@ class MerchantApi
      */
     public function getSettlementDetails(string $settlementId): Response
     {
-        $endpoint = '/merchant/v1/settlements/' . $settlementId;
+        $endpoint = self::SETTLEMENT_ENDPOINT . "/{$settlementId}";
         $response = $this->sendRequest($endpoint, self::METHOD_GET);
 
         return $this->handleResponse($response);
@@ -139,7 +140,7 @@ class MerchantApi
      */
     public function getPaymentDetails(string $paymentId): Response
     {
-        $endpoint = '/merchant/v1/payments/' . $paymentId;
+        $endpoint = self::PAYMENT_ENDPOINT . "/{$paymentId}";
         $response = $this->sendRequest($endpoint, self::METHOD_GET);
 
         return $this->handleResponse($response);
@@ -153,7 +154,7 @@ class MerchantApi
      */
     public function getPayments(string $orderNumber): Response
     {
-        $endpoint = '/merchant/v1/payments?order_number=' . $orderNumber;
+        $endpoint = self::PAYMENT_ENDPOINT . "?order_number={$orderNumber}";
         $response = $this->sendRequest($endpoint, self::METHOD_GET);
 
         return $this->handleResponse($response);
@@ -241,9 +242,7 @@ class MerchantApi
             return new Failed($response);
         }
 
-        $statusCode = $response->getStatusCode();
-
-        if ($statusCode === $acceptedStatusCode) {
+        if ($response->getStatusCode() === $acceptedStatusCode) {
             return new Success($response->getBody()->getContents());
         }
 

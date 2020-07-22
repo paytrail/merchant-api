@@ -9,7 +9,7 @@ namespace Paytrail\MerchantApi;
  */
 class Failed extends Response
 {
-    public function __construct($error)
+    public function __construct(string $error)
     {
         $this->error = $error;
     }

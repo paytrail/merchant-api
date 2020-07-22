@@ -9,7 +9,7 @@ namespace Paytrail\MerchantApi;
  */
 class Success extends Response
 {
-    public function __construct($content)
+    public function __construct(string $content)
     {
         $this->content = $content;
     }

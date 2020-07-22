@@ -19,7 +19,7 @@ $merchantApi = new MerchantApi($merchant);
 ```
 
 All API calls will return Either `Success` or `Failed` object. Both of them extend `Response` object.
-Response object have methods; `getContent()` and `getErrror()`.
+Response object have methods; `getContent()` and `getError()`.
 If API call is success, `getContent()` will return response content from response itself.
 On failed calls `getContent()` returns null and `getError()` return error message.
 Both methods will return string.
