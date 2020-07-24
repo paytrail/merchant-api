@@ -13,15 +13,15 @@ use Psr\Http\Message\ResponseInterface;
  */
 class MerchantApi
 {
-    const DEFAULT_API_URL = 'https://api.paytrail.com';
+    private const DEFAULT_API_URL = 'https://api.paytrail.com';
 
-    const METHOD_POST = 'POST';
-    const METHOD_GET = 'GET';
-    const METHOD_DELETE = 'DELETE';
+    private const METHOD_POST = 'POST';
+    private const METHOD_GET = 'GET';
+    private const METHOD_DELETE = 'DELETE';
 
-    const PAYMENT_ENDPOINT = '/merchant/v1/payments';
-    const REFUND_ENDPOINT = '/merchant/v1/refunds';
-    const SETTLEMENT_ENDPOINT = '/merchant/v1/settlements';
+    private const PAYMENT_ENDPOINT = '/merchant/v1/payments';
+    private const REFUND_ENDPOINT = '/merchant/v1/refunds';
+    private const SETTLEMENT_ENDPOINT = '/merchant/v1/settlements';
 
     private $client;
     private $merchant;
@@ -63,15 +63,15 @@ class MerchantApi
             return new Failed($response);
         }
 
-        if ($response->getStatusCode() === 202) {
-            $location = $response->getHeaders()['Location'][0];
-            $locationParts = explode('/', $location);
-
-            // Refund token is last part of location
-            return new Success(end($locationParts));
+        if ($response->getStatusCode() !== 202) {
+            return new Failed($this->getFailedMessage($response));
         }
 
-        return new Failed($this->getFailedMessage($response));
+        $location = $response->getHeaders()['Location'][0];
+        $locationParts = explode('/', $location);
+
+        // Refund token is last part of location
+        return new Success(end($locationParts));
     }
 
     /**
@@ -242,11 +242,11 @@ class MerchantApi
             return new Failed($response);
         }
 
-        if ($response->getStatusCode() === $acceptedStatusCode) {
-            return new Success($response->getBody()->getContents());
+        if ($response->getStatusCode() !== $acceptedStatusCode) {
+            return new Failed($this->getFailedMessage($response));
         }
 
-        return new Failed($this->getFailedMessage($response));
+        return new Success($response->getBody()->getContents());
     }
 
     /**
