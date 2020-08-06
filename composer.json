@@ -1,0 +1,40 @@
+{
+    "name": "paytrail/merchant-api",
+    "description": "Library for using Paytrail Merchant API services.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Paytrail",
+            "email": "tech@paytrail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "php": ">=7.2",
+        "guzzlehttp/guzzle": "^6.5",
+        "ext-json": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Paytrail\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "tests\\": "tests/"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9,0 || ^8.0",
+        "phpunit/php-code-coverage": "^7.0"
+    },
+    "scripts": {
+        "test": [
+            "@composer dump-autoload -o",
+            "vendor/bin/phpunit"
+        ],
+        "test-coverage": "@test --coverage-text --coverage-html test-reports/html"
+    },
+    "prefer-stable": true
+}
